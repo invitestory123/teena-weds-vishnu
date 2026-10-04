@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Teena &amp; Vishnu — Wedding Invitation</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <script src="./editable/wedding-data.js"></script>
+    <style>
+      #music-control {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        pointer-events: auto;
+      }
+      #music-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 9999px;
+        background: rgba(6, 32, 24, 0.82);
+        border: 1px solid rgba(225, 190, 120, 0.55);
+        color: #e1be78;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+        outline: none;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        user-select: none;
+      }
+      #music-btn:hover {
+        background: rgba(10, 48, 36, 0.95);
+        border-color: rgba(225, 190, 120, 0.9);
+        box-shadow: 0 0 20px rgba(225, 190, 120, 0.4);
+        transform: translateY(-1px);
+      }
+      .music-disc-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+      }
+      #music-btn.playing .music-disc-icon {
+        animation: music-spin 4s linear infinite;
+      }
+      @keyframes music-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @media (max-width: 640px) {
+        #music-control {
+          top: 1rem;
+          right: 1rem;
+        }
+        #music-btn {
+          padding: 0.4rem 0.75rem;
+          font-size: 0.62rem;
+        }
+      }
+    </style>
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        var wrapper = document.createElement('div');
+        wrapper.id = 'music-control';
+        wrapper.innerHTML = [
+          '<audio id="wedding-audio" loop preload="auto">',
+          '  <source src="./tvbg.mpeg" type="audio/mpeg">',
+          '  <source src="./tvbg.mp3" type="audio/mp3">',
+          '  <source src="./editable/assets/tvbg.mpeg" type="audio/mpeg">',
+          '  <source src="./editable/assets/tvbg.mp3" type="audio/mp3">',
+          '</audio>',
+          '<button id="music-btn" type="button" aria-label="Toggle background music" title="Background Music">',
+          '  <svg class="music-disc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
+          '    <circle cx="12" cy="12" r="10"></circle>',
+          '    <circle cx="12" cy="12" r="3"></circle>',
+          '    <path d="M12 2a10 10 0 0 1 10 10" stroke="#e1be78" stroke-width="2.5"></path>',
+          '  </svg>',
+          '  <span id="music-label">Play Music</span>',
+          '</button>'
+        ].join('');
+        document.body.appendChild(wrapper);
+
+        var audio = document.getElementById('wedding-audio');
+        var btn = document.getElementById('music-btn');
+        var label = document.getElementById('music-label');
+        var isStarted = false;
+
+        function playAudio() {
+          if (!audio) return;
+          audio.play().then(function() {
+            if (btn) btn.classList.add('playing');
+            if (label) label.textContent = 'Music ♫';
+          }).catch(function(err) {
+            console.log('Audio playback waiting for user gesture:', err);
+          });
+        }
+
+        function toggleAudio() {
+          if (!audio) return;
+          if (audio.paused) {
+            audio.play().then(function() {
+              if (btn) btn.classList.add('playing');
+              if (label) label.textContent = 'Music ♫';
+            }).catch(function(err) {
+              console.log('Audio play error:', err);
+            });
+          } else {
+            audio.pause();
+            if (btn) btn.classList.remove('playing');
+            if (label) label.textContent = 'Music Paused';
+          }
+        }
+
+        if (btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleAudio();
+          });
+        }
+
+        function onFirstInteract() {
+          if (!isStarted) {
+            isStarted = true;
+            playAudio();
+          }
+          window.removeEventListener('pointerdown', onFirstInteract);
+          window.removeEventListener('touchstart', onFirstInteract);
+          window.removeEventListener('click', onFirstInteract);
+          window.removeEventListener('keydown', onFirstInteract);
+        }
+        window.addEventListener('pointerdown', onFirstInteract);
+        window.addEventListener('touchstart', onFirstInteract);
+        window.addEventListener('click', onFirstInteract);
+        window.addEventListener('keydown', onFirstInteract);
+      });
+    </script>
+    <script type="module" crossorigin src="./assets/index-cdc8IQTD.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/styles-xl0qPzWF.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
