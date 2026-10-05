@@ -48,37 +48,5 @@ window.WEDDING_DATA = {
     coupleHero: "./editable/assets/couple-hero.png",
     mapPreview: "./editable/assets/map-preview.jpg",
   },
-
-  gallery: [
-    {
-      src: "./editable/assets/groom-traditional.jpg",
-      title: "Vishnu",
-      subtitle: "The Groom",
-    },
-    {
-      src: "./editable/assets/bride-festive.jpg",
-      title: "Teena",
-      subtitle: "The Bride",
-    },
-    {
-      src: "./editable/assets/groom-purple.jpg",
-      title: "Vishnu",
-      subtitle: "Celebrations",
-    },
-    {
-      src: "./editable/assets/bride-pink-wall.jpg",
-      title: "Teena",
-      subtitle: "Radiance",
-    },
-    {
-      src: "./editable/assets/groom-casual.jpg",
-      title: "Vishnu",
-      subtitle: "Memories",
-    },
-    {
-      src: "./editable/assets/bride-blue.jpg",
-      title: "Teena",
-      subtitle: "Smiles",
-    },
-  ],
 };
+

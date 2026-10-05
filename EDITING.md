@@ -34,19 +34,13 @@ Edit `venue` block in `editable/wedding-data.js`:
 - `locationShort`: City/State for hero section (e.g. `"Kochi, Kerala"`)
 - `mapsUrl`: Google Maps link for directions button
 
-### Images & Gallery
+### Images
 Replace files directly in `editable/assets/` or update paths in `editable/wedding-data.js`:
 - Couple watercolour hero illustration: `editable/assets/couple-hero.png`
-- Groom photo: `editable/assets/groom.png` (or `editable/assets/groom-traditional.jpg`)
-- Bride photo: `editable/assets/bride.png` (or `editable/assets/bride-festive.jpg`)
-- Gallery photos: configured in `gallery` array in `editable/wedding-data.js`:
-  - `editable/assets/groom-traditional.jpg`
-  - `editable/assets/bride-festive.jpg`
-  - `editable/assets/groom-purple.jpg`
-  - `editable/assets/bride-pink-wall.jpg`
-  - `editable/assets/groom-casual.jpg`
-  - `editable/assets/bride-blue.jpg`
+- Groom photo: `editable/assets/groom.png`
+- Bride photo: `editable/assets/bride.png`
 - Map preview image: `editable/assets/map-preview.jpg`
+
 
 ### Background Music
 - Background song: "The Rose (Instrumental)" by Anirudh Ravichander
