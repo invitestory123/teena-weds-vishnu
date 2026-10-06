@@ -99,6 +99,7 @@
 
         function playAudio() {
           if (!audio) return;
+          audio.currentTime = 17;
           audio.play().then(function() {
             if (btn) btn.classList.add('playing');
             if (label) label.textContent = 'Music ♫';
@@ -110,7 +111,12 @@
         function toggleAudio() {
           if (!audio) return;
           if (audio.paused) {
-            audio.play().then(function() {
+            audio.currentTime = 17;
+           audio.currentTime = 17;
+           audio.currentTime = 17;
+           audio.currentTime = 17;
+           audio.currentTime = 17;
+           audio.play().then(function() {
               if (btn) btn.classList.add('playing');
               if (label) label.textContent = 'Music ♫';
             }).catch(function(err) {
