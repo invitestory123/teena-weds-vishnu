@@ -21,7 +21,6 @@ window.WEDDING_DATA = {
       photo: "./editable/assets/bride.png",
       photos: [
         "./editable/assets/bride.png",
-        "./editable/assets/bride-pink-wall.jpg",
       ],
     },
   },
