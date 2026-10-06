@@ -19,6 +19,10 @@ window.WEDDING_DATA = {
       line: "",
       note: "Ready to walk hand-in-hand into forever, creating a lifetime of memories with Vishnu.",
       photo: "./editable/assets/bride.png",
+      photos: [
+        "./editable/assets/bride.png",
+        "./editable/assets/bride-pink-wall.jpg",
+      ],
     },
   },
 

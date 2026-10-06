@@ -16,6 +16,7 @@ Edit `couple.groom` and `couple.bride` in `editable/wedding-data.js`:
 - `line`: Parentage line (e.g. `"Son of..."`, `"Daughter of..."`)
 - `note`: Personal blurb/bio
 - `photo`: Path to portrait photo (defaults to `./editable/assets/groom.png` and `./editable/assets/bride.png`)
+- `photos`: (Optional) Array of photo paths for animated crossfade transition
 
 ### Wedding Date & Times
 Edit `wedding` block in `editable/wedding-data.js`:
