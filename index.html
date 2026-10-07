@@ -70,17 +70,12 @@
     </style>
     <script>
       window.addEventListener('DOMContentLoaded', function() {
+        var START_AT = 17; // skip the lead-in, start at the melody
+
         var wrapper = document.createElement('div');
         wrapper.id = 'music-control';
         wrapper.innerHTML = [
-          '<audio id="wedding-audio" loop preload="auto">',
-          '  <source src="./the_rose.mp3" type="audio/mp3">',
-          '  <source src="./editable/assets/the_rose.mp3" type="audio/mp3">',
-          '  <source src="./tvbg.mpeg" type="audio/mpeg">',
-          '  <source src="./tvbg.mp3" type="audio/mp3">',
-          '  <source src="./editable/assets/tvbg.mpeg" type="audio/mpeg">',
-          '  <source src="./editable/assets/tvbg.mp3" type="audio/mp3">',
-          '</audio>',
+          '<audio id="wedding-audio" loop preload="auto"></audio>',
           '<button id="music-btn" type="button" aria-label="Toggle background music" title="Background Music">',
           '  <svg class="music-disc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
           '    <circle cx="12" cy="12" r="10"></circle>',
@@ -95,38 +90,93 @@
         var audio = document.getElementById('wedding-audio');
         var btn = document.getElementById('music-btn');
         var label = document.getElementById('music-label');
-        var isStarted = false;
+        var started = false;   // playback has succeeded at least once
+        var starting = false;  // a play() attempt is in flight
 
-        function playAudio() {
-          if (!audio) return;
-          audio.currentTime = 17;
+        // Track list: the editable data file wins, baked-in files are fallbacks.
+        var configured = [];
+        try {
+          var cfg = window.WEDDING_DATA && window.WEDDING_DATA.music;
+          if (cfg && cfg.src) configured.push(cfg.src);
+        } catch (err) {}
+        var seen = {};
+        configured.concat([
+          './the_rose.mp3',
+          './editable/assets/the_rose.mp3',
+          './tvbg.mp3',
+          './editable/assets/tvbg.mp3',
+          './tvbg.mpeg',
+          './editable/assets/tvbg.mpeg'
+        ]).forEach(function(src) {
+          if (!src || seen[src]) return;
+          seen[src] = true;
+          var el = document.createElement('source');
+          el.src = src;
+          el.type = 'audio/mpeg';
+          audio.appendChild(el);
+        });
+
+        function syncUI() {
+          var playing = !!audio && !audio.paused && !audio.ended;
+          if (btn) {
+            btn.classList.toggle('playing', playing);
+            btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+          }
+          if (label) {
+            label.textContent = playing ? 'Music ♫' : (started ? 'Music Paused' : 'Play Music');
+          }
+        }
+
+        function seekToMelody() {
+          if (audio.currentTime >= START_AT) return;
+          var duration = audio.duration;
+          if (isFinite(duration) && duration <= START_AT + 2) return;
+          try { audio.currentTime = START_AT; } catch (err) {}
+        }
+
+        function startMusic() {
+          if (!audio || starting || !audio.paused) return;
+          seekToMelody();
+          starting = true;
           audio.play().then(function() {
-            if (btn) btn.classList.add('playing');
-            if (label) label.textContent = 'Music ♫';
-          }).catch(function(err) {
-            console.log('Audio playback waiting for user gesture:', err);
+            started = true;
+            detachAutoStart();
+            starting = false;
+            syncUI();
+          }, function(err) {
+            // Autoplay blocked (or source problem) — keep the gesture
+            // listeners alive so the first tap/keydown still starts it.
+            console.log('Music will start on first interaction:', err && err.name);
+            starting = false;
+            if (!audio.paused) { try { audio.pause(); } catch (e) {} }
+            syncUI();
           });
         }
 
         function toggleAudio() {
           if (!audio) return;
-          if (audio.paused) {
-            audio.currentTime = 17;
-           audio.currentTime = 17;
-           audio.currentTime = 17;
-           audio.currentTime = 17;
-           audio.currentTime = 17;
-           audio.play().then(function() {
-              if (btn) btn.classList.add('playing');
-              if (label) label.textContent = 'Music ♫';
-            }).catch(function(err) {
-              console.log('Audio play error:', err);
-            });
-          } else {
-            audio.pause();
-            if (btn) btn.classList.remove('playing');
-            if (label) label.textContent = 'Music Paused';
-          }
+          if (audio.paused) startMusic();
+          else audio.pause();
+        }
+
+        // Auto-start: listens during the capture phase so app-level
+        // stopPropagation() calls cannot swallow the very first gesture.
+        var GESTURES = ['pointerdown', 'touchstart', 'mousedown', 'click', 'keydown'];
+        function onGesture(e) {
+          var t = e && e.target;
+          // The music button handles its own clicks (toggle, not auto-start).
+          if (t && typeof t.closest === 'function' && t.closest('#music-control')) return;
+          startMusic();
+        }
+        function attachAutoStart() {
+          GESTURES.forEach(function(type) {
+            document.addEventListener(type, onGesture, true);
+          });
+        }
+        function detachAutoStart() {
+          GESTURES.forEach(function(type) {
+            document.removeEventListener(type, onGesture, true);
+          });
         }
 
         if (btn) {
@@ -136,20 +186,21 @@
           });
         }
 
-        function onFirstInteract() {
-          if (!isStarted) {
-            isStarted = true;
-            playAudio();
-          }
-          window.removeEventListener('pointerdown', onFirstInteract);
-          window.removeEventListener('touchstart', onFirstInteract);
-          window.removeEventListener('click', onFirstInteract);
-          window.removeEventListener('keydown', onFirstInteract);
+        if (audio) {
+          audio.addEventListener('play', syncUI);
+          audio.addEventListener('playing', syncUI);
+          audio.addEventListener('pause', syncUI);
+          audio.addEventListener('ended', syncUI);
+          audio.addEventListener('loadedmetadata', seekToMelody);
+          audio.addEventListener('seeked', function() {
+            // Restart from the melody instead of the lead-in after looping.
+            if (started && audio.currentTime < 0.5) seekToMelody();
+          });
         }
-        window.addEventListener('pointerdown', onFirstInteract);
-        window.addEventListener('touchstart', onFirstInteract);
-        window.addEventListener('click', onFirstInteract);
-        window.addEventListener('keydown', onFirstInteract);
+
+        syncUI();
+        attachAutoStart();
+        startMusic(); // try to play immediately; browsers that block it fall back to the first gesture
       });
     </script>
     <script type="module" crossorigin src="./assets/index-cdc8IQTD.js"></script>
